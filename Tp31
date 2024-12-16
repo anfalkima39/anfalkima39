@@ -1,0 +1,79 @@
+
+#include <stdio.h>
+#include <stdlib.h>
+typedef struct element {
+
+    int val;                 // قيمة العقدة لتخزين قيم
+    struct element* suivant; // مؤشر يشير إلى العقدة التالية
+} element;
+
+element* creerListe() {
+    return NULL; // قائمة بدون عناصر
+}
+
+element* chargerListe(int Tab[], int taille, element* liste) {
+    for (int i = 0; i < taille; i++) {
+        element* nouveau = (element*)malloc(sizeof(element)); // إنشاء عقدة جديدة
+        nouveau->val = Tab[i]; // تخزين القيمة في العقدة
+        nouveau->suivant = liste; // ربط العقدة الجديدة ببداية القائمة الحالية
+        liste = nouveau; // تحديث بداية القائمة
+    }
+    return liste; // إرجاع القائمة المملوءة
+}
+
+void afficherListe(element* L) {
+    element* courant = L; // مؤقت للإشارة إلى العقدة الحالية
+    while (courant != NULL) {
+        printf("%d -> ", courant->val); // طباعة القيمة
+        courant = courant->suivant;    // الانتقال إلى العقدة التالية
+    }
+    printf("NULL\n"); // نهاية القائمة
+}
+
+element* supprimerEnFin(element* L) {
+    if (L == NULL) return NULL; // القائمة فارغة
+    if (L->suivant == NULL) { // حالة العنصر الوحيد
+        free(L);
+        return NULL;
+    }
+    element* courant = L;
+    while (courant->suivant->suivant != NULL) {
+        courant = courant->suivant; // الوصول إلى العنصر قبل الأخير
+    }
+    free(courant->suivant); // تحرير العنصر الأخير
+    courant->suivant = NULL; // تحديث الرابط ليشير إلى NULL
+    return L;
+}
+
+element* ajouterEnDebut(element* L, int valeur) {
+    element* nouveau = (element*)malloc(sizeof(element)); // إنشاء عقدة جديدة
+    nouveau->val = valeur; // تخزين القيمة
+    nouveau->suivant = L; // ربط العقدة الجديدة ببداية القائمة
+    return nouveau; // إرجاع القائمة المحدثة
+}
+
+void viderListe(element* L) {
+    element* courant = L; // مؤقت للإشارة إلى العقدة الحالية
+    while (courant != NULL) {
+        element* temp = courant;
+        courant = courant->suivant; // الانتقال إلى العقدة التالية
+        free(temp); // تحرير العقدة الحالية
+    }
+    printf("La liste est vide.\n"); // طباعة رسالة
+}
+
+int main() {
+    int Tab[10] = {1, 3, 5, 7, 8, 10, 9, 11, 13, 20}; 
+    element* liste = creerListe(); // إنشاء قائمة فارغة
+    element* L = chargerListe(Tab, 10, liste); // تحميل المصفوفة إلى القائمة
+    afficherListe(L); // عرض القائمة
+
+    element* L1 = supprimerEnFin(L); // حذف العنصر الأخير
+    afficherListe(L1); // عرض القائمة بعد الحذف
+
+    element* L2 = ajouterEnDebut(L1, 40); // إضافة عنصر في البداية
+    afficherListe(L2); // عرض القائمة بعد الإضافة
+
+    viderListe(L2); // تفريغ القائمة
+    return 0;
+}
